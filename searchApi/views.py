@@ -50,7 +50,7 @@ class ApiConsulta(View):
             if desde and hasta:
                 self.get_uf_range(desde_, hasta_, context, filter_)
                    
-        return render(request, 'SearchApi/detalles.html', context)
+        return render(request, 'searchApi/detalles.html', context)
 
     def max_uf(self,uf_list):
         max_val = max(uf_list,key=lambda item:item['Valor'])
