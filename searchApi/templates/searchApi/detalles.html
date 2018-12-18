@@ -1,0 +1,165 @@
+{% load static %}
+
+<html>
+    <head>
+        <title>Consulta SEBIF.CL</title>
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    </head>
+    <body>
+    <div class="container">
+        <header>
+            <div class="jumbotron jumbotron-fluid">
+                    <div class="container text-center">
+                      <h1 class="display-4">Consulta SEBIF.CL</h1>
+                      <p class="lead">Tasa del día <strong> UF: {{ufDia.0.Valor}}</p><br>
+                      <p class="lead">Tasa del día <strong> Dólar: {{dolarDia.0.Valor}}</p>
+                    </div>
+            </div>
+        </header>
+        
+        <section class="post container-fluid">
+                    <div class="card-body">
+                            <form id="formFechas" method="post" action="{% url 'consultar' %}">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-sm form-group">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="uf" name="filter" hidden checked id="defaultCheck1">
+                                            <label class="form-check-label" for="defaultCheck1">
+                                              
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm form-group">
+                                        <label class="form-check-label" for="defaultCheck1">
+                                            Desde
+                                        </label>
+                                        <input type="date" required name="desde" value="{{desde}}" class="form-control" placeholder="Fecha Desde">
+                                    </div>
+                                    <div class="col-sm form-group">
+                                        <label class="form-check-label" value="{{hasta}}" for="defaultCheck1">
+                                            Hasta
+                                        </label>
+                                        <input type="date" required name="hasta" class="form-control" placeholder="Fecha Hasta">
+                                    </div>
+                                    <div class="col-sm form-group" style="margin-top:26px">
+                                            <button type="submit" class="btn btn-danger btn-md"> Ver</button>
+                                    </div> 
+                                </div> 
+                            </form>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-6">
+                        <div class="row"><h3>Información de la UF</h3> </div>
+                        <div class="row">
+                                  <div class="col-sm">
+                                        {% if max_uf %}
+                                        <li class="list-group-item"> Máximo de la <em>UF</em>:  <strong>{% if max_uf.Valor %} {{max_uf.Valor}} {%else %} {{max_uf}}  {%endif%}</strong> </li>
+                                        {% endif%}
+                                  </div>
+                                  <div class="col-sm">
+                                        {% if min_uf %}
+                                        <li class="list-group-item"> Mínimo de la <em>UF</em>: <strong>{% if min_uf.Valor %} {{min_uf.Valor}} {%else %} {{min_uf}}  {%endif%}</strong> </li>
+                                        {% endif%}
+                                  </div>
+                                  <div class="col-sm">
+                                        {% if media_uf %}
+                                        <li class="list-group-item"> Prom. de la <em>UF</em>: <strong>{% if media_uf.Valor %} {{media_uf.Valor}} {%else %} {{media_uf}}  {%endif%}</strong></li>
+                                        {% endif%}
+                                  </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row"><h3>Información del Dólar</h3> </div>
+                        <div class="row">
+                                <div class="col-sm">
+                                      {% if max_dolar %}
+                                      <li class="list-group-item"> Máximo del <em>$</em>:  <strong>{% if max_dolar.Valor %} {{max_dolar.Valor}} {%else %} {{max_dolar}}  {%endif%}</strong> </li>
+                                      {% endif%}
+                                </div>
+                                <div class="col-sm">
+                                      {% if min_dolar %}
+                                      <li class="list-group-item"> Mínimo del <em>$</em>: <strong>{% if min_dolar.Valor %} {{min_dolar.Valor}} {%else %} {{min_dolar}}  {%endif%} </strong> </li>
+                                      {% endif%}
+                                </div>
+                                <div class="col-sm">
+                                      {% if media_dolar %}
+                                      <li class="list-group-item"> Prom. del <em>$</em>: <strong>{% if media_dolar.Valor %} {{media_dolar.Valor}} {%else %} {{media_dolar}}  {%endif%} </strong></li>
+                                      {% endif%}
+                                </div>
+                       </div>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-4">
+                        <div class="row"><h3>Resultado UF</h3></div>
+                        <div class="row">
+                            {% for x in uf.UFs %}
+                            <ul>UF: {{x.Valor}} Fecha: {{x.Fecha}}</ul>
+                            {% endfor%}
+                            {% for x in uf_bd %}
+                            <ul>UF: {{x.uf}} Fecha: {{x.date|date:'d/m/Y'}}</ul>
+                            {% endfor%}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row"><h3>Resultado Dolar</h3></div>
+                        <div class="row">
+                            {% for x in dol.Dolares %}
+                            <ul>Dolar: {{x.Valor}} Fecha: {{x.Fecha}}</ul>
+                            {% endfor%}
+                            {% for x in dol_bd %}
+                            <ul>Valor: {{x.dolar}} {{x.date|date:'d/m/Y'}}</ul>
+                            {% endfor%}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="row"><h3>Resultado TMC</h3></div>
+                        <div class="row">
+                            {% for x in tmc_api.TMCs %}
+                            <ul>Valor: {{x.Valor}} Tipo: {{x.Tipo}} Fecha: {{x.Fecha}}</ul>
+                            {% endfor%}
+                            {% for x in tmc_bd %}
+                            <ul>Valor: {{x.tmc}} Tipo:{{x.Tipo}}  {{x.date|date:'d/m/Y'}}</ul>
+                            {% endfor%}
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="row">
+                            <div class="col-md-12">
+                                    <div id="chartdiv" data-last-value="{{ufs}}"></div>
+                            </div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-12">
+                                    <div id="dolardiv" data-dolar-value="{{dolares}}"></div>
+                            </div>
+                    </div>
+                    <div class="row">
+                            <div class="col-md-12">
+                                <div id="tmcDiv" data-tmc-value="{{tmc_graf}}"></div>
+                            </div>
+                    </div>
+
+                                
+        </section>
+        <footer>
+            <div class="col text-center">
+                    API SBIF
+            </div>
+        </footer>
+    </div>
+    </body>
+</html>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//www.amcharts.com/lib/3/amcharts.js"></script>
+<script src="//www.amcharts.com/lib/3/serial.js"></script>
+<script src="//www.amcharts.com/lib/3/themes/light.js"></script>
+<script src="{% static 'app.js' %}"></script>
